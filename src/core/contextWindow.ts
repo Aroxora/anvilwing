@@ -11,15 +11,13 @@ interface ModelContextEntry {
   targetTokens: number;  // Safe threshold (70% of context)
 }
 
-// Single-model product: anvilwing only. The table has exactly one entry;
+// Single-model product: deepseek-v4-pro only. The table has exactly one entry;
 // any other string falls through to the conservative default below (which the
 // product never reaches, since the model is hard-locked in config.ts).
 //
-// anvilwing window = 1,048,576 tokens (2^20); max output 384,000 tokens.
-// Exact-match the locked model id so adjacent strings (anvilwing-chat,
-// anvilwing-coder) correctly fall through to the conservative default.
+// deepseek-v4 window = 1,048,576 tokens (2^20); max output 384,000 tokens.
 const MODEL_CONTEXT_WINDOWS: ModelContextEntry[] = [
-  { pattern: /^anvilwing$/i, contextWindow: 1_048_576, targetTokens: 629_145 },
+  { pattern: /^deepseek-v4/i, contextWindow: 1_048_576, targetTokens: 629_145 },
 ];
 
 // Default fallback values

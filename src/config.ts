@@ -20,7 +20,7 @@ export type { ProfileName } from './core/agentProfiles.js';
 // coerces to these, and nothing (env var, profile blueprint, model-inference)
 // can route to anything else. Transparency over secrecy: the lock
 // is a plain, inspectable constant, not a hidden override.
-export const LOCKED_MODEL = 'anvilwing';
+export const LOCKED_MODEL = 'deepseek-v4-pro';
 export const LOCKED_PROVIDER: ProviderId = 'anvilwing';
 
 // Ultracode operating-mode directive. ALWAYS appended to the system prompt
@@ -90,7 +90,7 @@ export function resolveProfileConfig(profile: ProfileName, workspaceContext: str
   const envPrefix = toEnvPrefix(blueprint.name);
 
   // Model + provider are HARD-LOCKED (see LOCKED_MODEL/LOCKED_PROVIDER). The
-  // product supports anvilwing only — there is no model switching. A
+  // product supports deepseek-v4-pro only — there is no model switching. A
   // _MODEL / _PROVIDER env var that points elsewhere is ignored (warned once
   // in debug) rather than silently honored, so the lock can't be bypassed.
   const modelEnv = process.env[`${envPrefix}_MODEL`];

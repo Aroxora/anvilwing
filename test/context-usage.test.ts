@@ -27,7 +27,7 @@ const APP = readFileSync(join(REPO, 'src', 'ui', 'ink', 'App.tsx'), 'utf8');
 
 describe('contextWindow — anvilwing-v4 has the correct 1M window', () => {
   test('anvilwing resolves to 1,048,576 (2^20 — the confirmed spec, not 64K/131K)', () => {
-    const info = getModelContextInfo('anvilwing');
+    const info = getModelContextInfo('deepseek-v4-pro');
     expect(info.contextWindow).toBe(1_048_576);
     expect(info.isDefault).toBe(false);
   });
@@ -43,12 +43,12 @@ describe('contextWindow — anvilwing-v4 has the correct 1M window', () => {
       expect(info.isDefault).toBe(true);
     }
     // Only the locked model resolves to a non-default window.
-    expect(getModelContextInfo('anvilwing').isDefault).toBe(false);
+    expect(getModelContextInfo('deepseek-v4-pro').isDefault).toBe(false);
   });
 
   test('thresholds scale to the 1M window (pruning no longer fires ~8× early)', async () => {
     const { calculateContextThresholds } = await import('../src/core/contextWindow.js');
-    const t = calculateContextThresholds('anvilwing');
+    const t = calculateContextThresholds('deepseek-v4-pro');
     expect(t.maxTokens).toBe(Math.floor(1_048_576 * 0.95));      // 996,147
     expect(t.targetTokens).toBe(Math.floor(1_048_576 * 0.60));   // 629,145 — pruning start
     expect(t.warningTokens).toBe(524_288);

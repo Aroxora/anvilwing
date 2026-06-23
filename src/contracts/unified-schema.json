@@ -16,15 +16,15 @@
       },
       "capabilities": ["chat", "reasoning", "tools", "streaming"],
       "openaiCompatible": true,
-      "models": ["anvilwing", "anvilwing-chat"],
-      "defaultModel": "anvilwing",
+      "models": ["deepseek-v4-pro"],
+      "defaultModel": "deepseek-v4-pro",
       "status": "production"
     }
   ],
 
   "defaults": {
     "provider": "anvilwing",
-    "model": "anvilwing",
+    "model": "deepseek-v4-pro",
     "temperature": 0.0,
     "maxTokens": 32768,
     "taskType": "coding"

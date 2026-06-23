@@ -10,7 +10,7 @@
       "label": "Anvilwing Code",
       "description": "Anvilwing-powered coding specialist with advanced reasoning capabilities on max thought.",
       "defaultProvider": "anvilwing",
-      "defaultModel": "anvilwing",
+      "defaultModel": "deepseek-v4-pro",
       "systemPrompt": {
         "type": "rulebook"
       },

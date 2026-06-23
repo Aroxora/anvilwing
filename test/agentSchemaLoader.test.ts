@@ -48,7 +48,7 @@ function runRealLoader(): LoaderOutput {
       provider_anvilwing: L.getProvider('anvilwing') ?? null,
       provider_unknown: L.getProvider('nope') ?? null,
       models: await L.getModels(),
-      model_v4: (await L.getModel('anvilwing')) ?? null,
+      model_v4: (await L.getModel('deepseek-v4-pro')) ?? null,
       model_unknown: (await L.getModel('nope')) ?? null,
       models_by_anvilwing: await L.getModelsByProvider('anvilwing'),
       profiles: L.getProfiles(),
@@ -56,7 +56,7 @@ function runRealLoader(): LoaderOutput {
       capabilities: L.getCapabilities(),
       isValidProvider_anvilwing: L.isValidProvider('anvilwing'),
       isValidProvider_nope: L.isValidProvider('nope'),
-      isValidModel_v4: await L.isValidModel('anvilwing'),
+      isValidModel_v4: await L.isValidModel('deepseek-v4-pro'),
       isValidModel_nope: await L.isValidModel('nope'),
       isValidProfile_code: L.isValidProfile('anvilwing-code'),
       isValidProfile_nope: L.isValidProfile('nope'),
@@ -102,7 +102,7 @@ describe('agentSchemaLoader — real loader vs real agent-schemas.json', () => {
   });
 
   test('model lookups resolve real entries; unknown → undefined', () => {
-    expect(L.model_v4?.id).toBe('anvilwing');
+    expect(L.model_v4?.id).toBe('deepseek-v4-pro');
     expect(L.model_v4?.provider).toBe('anvilwing');
     expect(L.model_unknown).toBeNull();
     expect(L.models_by_anvilwing.length).toBeGreaterThan(0);

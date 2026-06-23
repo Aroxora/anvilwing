@@ -31,7 +31,7 @@ const PLUGINS_INDEX = read('src', 'plugins', 'providers', 'index.ts');
 
 describe('the lock constants are exactly anvilwing / anvilwing', () => {
   test('LOCKED_MODEL and LOCKED_PROVIDER', () => {
-    expect(CONFIG).toMatch(/export const LOCKED_MODEL = 'anvilwing';/);
+    expect(CONFIG).toMatch(/export const LOCKED_MODEL = 'deepseek-v4-pro';/);
     expect(CONFIG).toMatch(/export const LOCKED_PROVIDER: ProviderId = 'anvilwing';/);
   });
 
@@ -46,7 +46,7 @@ describe('the lock constants are exactly anvilwing / anvilwing', () => {
 describe('agent-schemas.json declares anvilwing only', () => {
   test('exactly one model — anvilwing', () => {
     expect(SCHEMAS.models).toHaveLength(1);
-    expect(SCHEMAS.models[0].id).toBe('anvilwing');
+    expect(SCHEMAS.models[0].id).toBe('deepseek-v4-pro');
   });
 
   test('exactly one provider — anvilwing', () => {
@@ -61,7 +61,7 @@ describe('agent-schemas.json declares anvilwing only', () => {
 
   test('every profile defaults to the locked model + provider', () => {
     for (const p of SCHEMAS.profiles) {
-      expect(p.defaultModel).toBe('anvilwing');
+      expect(p.defaultModel).toBe('deepseek-v4-pro');
       expect(p.defaultProvider).toBe('anvilwing');
     }
   });
