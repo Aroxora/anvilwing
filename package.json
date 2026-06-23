@@ -15,6 +15,7 @@
     "dist",
     "scripts/postinstall.cjs",
     "README.md",
+    "assets",
     "agents",
     "LICENSE"
   ],

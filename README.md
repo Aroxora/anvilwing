@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/anvilwing-icon.png" alt="Anvilwing" width="168" height="168" />
+</p>
+
 # Anvilwing Coder
 
 [![npm version](https://img.shields.io/npm/v/anvilwing)](https://www.npmjs.com/package/anvilwing)
