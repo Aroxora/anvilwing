@@ -1,5 +1,5 @@
 {
-  "name": "anvilwing",
+  "name": "anvilwing-coder",
   "version": "1.5.23",
   "description": "Claude Code–class Ink TUI coding agent (max thought, ultracode always on). Live follow-up queue, Shift+Tab permission modes, colored diffs, adversarial verifier — bring your own key.",
   "anvilwing": {

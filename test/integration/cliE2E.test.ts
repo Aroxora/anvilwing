@@ -76,7 +76,7 @@ describe('CLI End-to-End Integration', () => {
     const pkgPath = join(process.cwd(), 'package.json');
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
 
-    expect(pkg.name).toBe('anvilwing');
+    expect(pkg.name).toBe('anvilwing-coder');
     expect(pkg.bin).toBeTruthy();
     expect(pkg.bin.anvilwing).toBeTruthy();
     expect(pkg.main).toBeTruthy();

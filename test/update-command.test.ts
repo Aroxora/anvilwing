@@ -44,7 +44,7 @@ describe('/update — version comparison decides updateAvailable', () => {
   });
 
   it('updateChecker queries npm and gates on compareVersions(latest, current) > 0', () => {
-    expect(updater).toMatch(/npm view anvilwing version/);
+    expect(updater).toMatch(/npm view anvilwing-coder version/);
     expect(updater).toMatch(/compareVersions\(latest, currentVersion\) > 0/);
   });
 
@@ -88,7 +88,7 @@ describe('/update — in-shell wiring', () => {
 describe('/update — LIVE auto-detect against the real npm registry (subprocess against dist)', () => {
   // updateChecker uses import.meta (not jest-importable), so drive the REAL
   // checkForUpdates from the built dist in a node child — it runs the actual
-  // `npm view anvilwing version` + compareVersions. Honest skip if the
+  // `npm view anvilwing-coder version` + compareVersions. Honest skip if the
   // registry is unreachable (checkForUpdates returns null on any failure); never
   // mocked. Proves the startup auto-detect actually fires.
   it('detects an update for an old version and not for a future one', () => {

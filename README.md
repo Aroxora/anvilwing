@@ -4,7 +4,7 @@
 
 # Anvilwing Coder
 
-[![npm version](https://img.shields.io/npm/v/anvilwing)](https://www.npmjs.com/package/anvilwing)
+[![npm version](https://img.shields.io/npm/v/anvilwing-coder)](https://www.npmjs.com/package/anvilwing-coder)
 [![CI](https://github.com/Aroxora/anvilwing/actions/workflows/ci.yml/badge.svg)](https://github.com/Aroxora/anvilwing/actions/workflows/ci.yml)
 
 **A Claude Code–class terminal coding agent you fully control — for a fraction of the price.**
@@ -12,7 +12,7 @@
 Anvilwing Coder is an Ink-rendered CLI coding agent (the same terminal-UI engine Claude Code uses) that reads code, edits files, runs commands, and searches the web — rendered with the exact `⏺` / `⎿` transcript shape, permission modes, and colored diffs you know from Claude Code. The difference: it runs on **Anvilwing v4 Pro at max thought** with **your own API keys**, so a month of heavy daily use costs less than a *single* Claude Max 20× subscription, and it does the work you ask without an approval-nag or hosted-refusal layer in the way.
 
 ```bash
-npm install -g anvilwing
+npm install -g anvilwing-coder
 anvilwing
 ```
 
@@ -64,7 +64,7 @@ The example sessions are rendered from the *exact* strings the binary emits (`sr
 ## Install & run
 
 ```bash
-npm install -g anvilwing
+npm install -g anvilwing-coder
 ```
 
 Exposes the `anvilwing` command on PATH. The bin is **interactive-only**: running it launches the Ink shell. There are no argv flags, no print/headless mode, and a non-TTY invocation (`anvilwing < /dev/null`, piping, CI without a PTY) fails fast on purpose.
