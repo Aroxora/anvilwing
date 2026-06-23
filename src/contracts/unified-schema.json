@@ -1,0 +1,40 @@
+{
+  "$schema": "./schemas/unified-schema.schema.json",
+  "contractVersion": "2.0.0",
+  "version": "2024-11-25",
+  "label": "Anvilwing CLI Unified Schema",
+  "description": "Comprehensive schema for AI tasks, providers, and tools - single source of truth",
+
+  "providers": [
+    {
+      "id": "anvilwing",
+      "label": "Anvilwing",
+      "description": "Anvilwing reasoning and coding models on max thought",
+      "baseUrl": "https://api.deepseek.com",
+      "envVars": {
+        "apiKey": "ANVILWING_API_KEY"
+      },
+      "capabilities": ["chat", "reasoning", "tools", "streaming"],
+      "openaiCompatible": true,
+      "models": ["anvilwing", "anvilwing-chat"],
+      "defaultModel": "anvilwing",
+      "status": "production"
+    }
+  ],
+
+  "defaults": {
+    "provider": "anvilwing",
+    "model": "anvilwing",
+    "temperature": 0.0,
+    "maxTokens": 32768,
+    "taskType": "coding"
+  },
+
+  "metadata": {
+    "schemaVersion": "2.0.0",
+    "lastUpdated": "2024-11-25",
+    "author": "Bo Shang",
+    "framework": "anvilwing-cli",
+    "description": "Unified schema for Anvilwing-powered AI tasks"
+  }
+}

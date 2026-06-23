@@ -1,0 +1,155 @@
+{
+  "$schema": "./schemas/agent-schemas.schema.json",
+  "contractVersion": "1.0.0",
+  "version": "2024-11-24",
+  "label": "Anvilwing CLI Agent Configuration Schema",
+  "description": "Centralized configuration for all agents, models, providers, and capabilities",
+  "providers": [
+    {
+      "id": "anvilwing",
+      "label": "Anvilwing",
+      "description": "Anvilwing reasoning and chat models",
+      "envVars": {
+        "apiKey": "ANVILWING_API_KEY"
+      },
+      "capabilities": [
+        "chat",
+        "reasoning",
+        "tools",
+        "streaming"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "id": "anvilwing",
+      "label": "Anvilwing v4 Pro",
+      "provider": "anvilwing",
+      "description": "Deep reasoning with 1M context on max thought.",
+      "capabilities": [
+        "chat",
+        "reasoning",
+        "tools",
+        "streaming"
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "name": "anvilwing-code",
+      "label": "Anvilwing Code",
+      "description": "Anvilwing-powered AI assistant with advanced coding capabilities.",
+      "defaultProvider": "anvilwing",
+      "defaultModel": "anvilwing",
+      "systemPrompt": {
+        "type": "rulebook",
+        "template": "You are Anvilwing Coder, an elite coding agent working directly in the user's terminal on a real codebase with real tools.\n\n## Understand the request, then choose the best approach\n- Get the request RIGHT first. Read it literally and in context \u2014 what is the user actually trying to achieve, in this working directory, given what already exists? Restate non-trivial requests to yourself before acting. If a genuine ambiguity would change WHAT you build, ask ONE sharp question; otherwise infer the most reasonable intent and proceed.\n- Then pick the SIMPLEST approach that fully solves it: the smallest, most reversible change that fits the existing code and conventions, over a clever or sweeping one. Don't gold-plate; don't under-deliver.\n- Keep the user in the loop. Before acting on anything non-trivial, say in one short line what you understood and the approach you're taking, so they can redirect early. As you work, a brief note before a group of actions ('reading the parser, then fixing the off-by-one') is enough \u2014 never narrate every keystroke, never go silent for many tool calls. If you change strategy mid-task, say why in one line.\n\n## Match effort to the task\n- A clear, small task (create or edit a file, answer a question, run a command) \u2014 just do it, directly and immediately. Do NOT explore, plan, or announce a workflow for trivial work.\n- Before editing code you don't already understand, read the relevant files first (Glob/Grep/Read) so your change fits existing patterns \u2014 explore exactly as much as the task needs, no more.\n- For a large or ambiguous task, outline a short plan, then execute it end to end. The user can press Shift+Tab for plan mode to approve a plan before you act; otherwise act autonomously.\n\n## Finish once, then stop\n- When the task is done, end your reply with a final line that starts exactly with `DONE:` followed by one sentence stating what was done and how it was proven (e.g. `DONE: created scripts/run.sh; bash scripts/run.sh exited 0`). Nothing may follow that line \u2014 no questions, no offers ('Let me know\u2026'), no further checking.\n- When a real check exists and the task warrants it, verify ONCE by running the test, build, or command that proves the change works \u2014 a passing command is proof; re-reading the file is not. Do not re-read, re-open, or re-describe a file you just wrote.\n- Once a check has passed, never announce another check ('let me double-check', 'let me verify once more', 'just to confirm'). One passing command IS the proof \u2014 emit the `DONE:` line instead.\n- For an exact-match, equality, or byte-identical check, the proof is ONE deterministic comparison (diff, `cmp -s`, `grep -Fxq`, or `sha256sum`) \u2014 its exit code or empty output is decisive. State the result and emit `DONE:` immediately; do not re-compare by eye or re-run it.\n- If you cannot finish, do NOT emit `DONE:` \u2014 state the blocker and exactly what you need.\n- Never pad a finished task with byte counts, hex dumps, or repeated confirmations.\n\n## Treat obstacles as signal\n- A blocker, a failing test, or a dead end is information, not just a setback: it usually exposes a constraint that points to a simpler or more robust approach than your first plan. When you hit one, take a beat to ask what it is telling you and let it redirect you — the hardest part of a problem is often where the better design, and the most useful work, comes from. Apply hard-won heuristics like this on your own initiative, without being asked.\n- Act on the reframing; do not perform it. When the insight changes your approach, state the new direction in ONE line and take it. Never add motivational commentary, narrate your own resilience or cleverness, or re-report an obstacle you already routed around — that is exactly the slop this codebase forbids. If the reflection does not change what you do, stay silent about it.\n\n## Style\n- Be direct and technical. Skip disclaimers, preamble, and restating the obvious.\n- Provide complete, working code \u2014 no placeholders or 'you would\u2026' hand-waving.\n- Continue through recoverable errors autonomously; surface a blocker only when you genuinely cannot proceed.\n- Do not create markdown, docs, or summary files unless explicitly asked."
+      },
+      "rulebook": {
+        "file": "agents/anvilwing-code.rules.json",
+        "version": "2024-12-07",
+        "contractVersion": "1.0.0",
+        "description": "Versatile agent with coding and general capabilities."
+      },
+      "metadata": {
+        "primaryUseCase": "coding",
+        "secondaryUseCase": "general-assistant",
+        "tags": [
+          "coding",
+          "general",
+          "versatile",
+          "rapid-edits"
+        ]
+      }
+    }
+  ],
+  "slashCommands": [
+    {
+      "command": "/help",
+      "description": "Show all available commands and keyboard shortcuts",
+      "category": "other"
+    },
+    {
+      "command": "/clear",
+      "description": "Clear conversation history and start fresh",
+      "category": "workspace"
+    },
+    {
+      "command": "/exit",
+      "description": "Exit Anvilwing",
+      "category": "other"
+    },
+    {
+      "command": "/secrets",
+      "description": "Configure API keys",
+      "category": "configuration"
+    },
+    {
+      "command": "/debug",
+      "description": "Toggle debug mode",
+      "category": "diagnostics"
+    },
+    {
+      "command": "/adversarial",
+      "description": "Toggle adversarial verification",
+      "category": "configuration"
+    },
+    {
+      "command": "/ultracode",
+      "description": "Toggle ultracode operating mode",
+      "category": "configuration"
+    },
+    {
+      "command": "/auto",
+      "description": "Toggle auto-continue mode",
+      "category": "configuration"
+    },
+    {
+      "command": "/bash",
+      "description": "Run local shell command",
+      "category": "workspace"
+    },
+    {
+      "command": "/keys",
+      "description": "Show keyboard shortcuts",
+      "category": "other"
+    },
+    {
+      "command": "/stats",
+      "description": "Show session stats",
+      "category": "diagnostics"
+    },
+    {
+      "command": "/key",
+      "description": "Set Anvilwing API key",
+      "category": "configuration"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "chat",
+      "label": "Chat",
+      "description": "Basic conversational capabilities"
+    },
+    {
+      "id": "reasoning",
+      "label": "Reasoning",
+      "description": "Extended chain-of-thought reasoning capabilities"
+    },
+    {
+      "id": "tools",
+      "label": "Tool Use",
+      "description": "Ability to call external tools and functions"
+    },
+    {
+      "id": "streaming",
+      "label": "Streaming",
+      "description": "Support for streaming responses"
+    }
+  ],
+  "metadata": {
+    "schemaVersion": "1.0.0",
+    "lastUpdated": "2024-11-24",
+    "description": "Single source of truth for all agent configurations in the Anvilwing CLI"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "./schemas/tool-selection.schema.json",
+  "contractVersion": "1.0.0",
+  "profile": "agi-cli",
+  "version": "2024.12.04",
+  "label": "AGI CLI unified tool manifest",
+  "description": "Core toolset with filesystem, editing, search, and execution.",
+  "options": [
+    {
+      "id": "core-tools",
+      "label": "Core Tools",
+      "description": "Filesystem, editing, unified search, and execution.",
+      "defaultEnabled": true,
+      "category": "core",
+    "pluginIds": [
+      "tool.filesystem.local",
+      "tool.edit",
+      "tool.search.local",
+      "tool.bash.local",
+      "tool.enhanced-git",
+      "tool.orchestration.unified",
+      "tool.bidirectional-audit"
+    ],
+      "metadata": {
+        "locked": true
+      }
+    },
+    {
+      "id": "dependency-management-tools",
+      "label": "Dependency Management Tools",
+      "description": "Automatic dependency recovery, npm install on failure, and continuous operation capabilities.",
+      "defaultEnabled": true,
+      "category": "operations",
+      "pluginIds": [
+        "tool.dependency-management"
+      ],
+      "metadata": {
+        "locked": true
+      }
+    }
+  ]
+}

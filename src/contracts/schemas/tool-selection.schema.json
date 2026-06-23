@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tool Selection Contract v1.0",
+  "description": "Schema describing toggleable tool suites and presets exposed to an agent runtime.",
+  "type": "object",
+  "required": ["contractVersion", "profile", "version", "options"],
+  "properties": {
+    "contractVersion": {
+      "type": "string",
+      "description": "Version of the tool selection contract implemented by the payload."
+    },
+    "profile": {
+      "type": "string",
+      "description": "Agent profile identifier that the tool selection applies to."
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic or date-based version for the manifest."
+    },
+    "label": {
+      "type": "string",
+      "description": "Optional human readable label for the manifest."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional longer description."
+    },
+    "options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/ToolOption"
+      },
+      "description": "Toggleable tool suites."
+    },
+    "presets": {
+      "type": "array",
+      "description": "Optional named sets of enabled/disabled tools.",
+      "items": {
+        "$ref": "#/definitions/ToolPreset"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Implementation specific metadata."
+    }
+  },
+  "definitions": {
+    "ToolOption": {
+      "type": "object",
+      "required": ["id", "label", "description", "defaultEnabled", "pluginIds"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the tool option."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human readable name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Operator facing description."
+        },
+        "category": {
+          "type": "string",
+          "description": "Optional grouping/category label."
+        },
+        "defaultEnabled": {
+          "type": "boolean",
+          "description": "Whether the tool is enabled by default."
+        },
+        "pluginIds": {
+          "type": "array",
+          "minItems": 1,
+          "description": "IDs of the tool plugins activated by this option.",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "requiresSecret": {
+          "type": "string",
+          "description": "Identifier of a secret that must be configured before the tool can load."
+        },
+        "scopes": {
+          "type": "array",
+          "description": "Capabilities unlocked when this option is enabled.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "filesystem:read",
+              "filesystem:write",
+              "process:exec",
+              "network:web",
+              "network:api",
+              "analysis:code",
+              "analysis:quality",
+              "analysis:dependency",
+              "analysis:testing",
+              "analysis:security",
+              "planning:refactor",
+              "external:web-search"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Implementation specific metadata."
+        }
+      }
+    },
+    "ToolPreset": {
+      "type": "object",
+      "required": ["id", "label"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the preset."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human readable name for the preset."
+        },
+        "description": {
+          "type": "string",
+          "description": "Longer description or guidance."
+        },
+        "enabled": {
+          "type": "array",
+          "description": "Tool option IDs forced on by the preset.",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "disabled": {
+          "type": "array",
+          "description": "Tool option IDs forced off by the preset.",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "locked": {
+          "type": "array",
+          "description": "Tool option IDs that cannot be toggled while the preset is active.",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "appliesTo": {
+          "type": "array",
+          "description": "Frontends where this preset should be available.",
+          "items": {
+            "type": "string",
+            "enum": ["cli", "browser", "http", "worker", "service"]
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional operator note rendered with the preset."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Implementation specific metadata."
+        }
+      }
+    }
+  }
+}

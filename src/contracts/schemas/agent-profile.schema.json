@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Profile Manifest v1.0",
+  "description": "Schema describing agent profiles, their default providers/models, and how system prompts are constructed.",
+  "type": "object",
+  "required": ["contractVersion", "version", "profiles"],
+  "properties": {
+    "contractVersion": {
+      "type": "string",
+      "description": "Version of the profile manifest contract the payload implements."
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic or date-based version identifier for the manifest."
+    },
+    "label": {
+      "type": "string",
+      "description": "Optional display label for the manifest."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description for operators."
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/ProfileEntry"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Implementation specific metadata."
+    }
+  },
+  "definitions": {
+    "ProfileEntry": {
+      "type": "object",
+      "required": ["name", "label", "defaultProvider", "defaultModel", "systemPrompt", "rulebook"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Stable identifier for the agent profile."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human readable profile label."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description rendered in UIs."
+        },
+        "defaultProvider": {
+          "type": "string",
+          "description": "Provider identifier the profile defaults to."
+        },
+        "defaultModel": {
+          "type": "string",
+          "description": "Default model identifier for the profile."
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Optional default temperature."
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Optional default max token count."
+        },
+        "systemPrompt": {
+          "$ref": "#/definitions/PromptConfig"
+        },
+        "rulebook": {
+          "$ref": "#/definitions/RulebookReference"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Implementation specific metadata."
+        }
+      },
+      "additionalProperties": false
+    },
+    "PromptConfig": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/RulebookPromptConfig"
+        },
+        {
+          "$ref": "#/definitions/LiteralPromptConfig"
+        }
+      ]
+    },
+    "RulebookPromptConfig": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "rulebook"
+        },
+        "template": {
+          "type": "string",
+          "description": "Optional template with placeholders like {{rulebook}}."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Implementation specific metadata."
+        }
+      },
+      "additionalProperties": false
+    },
+    "LiteralPromptConfig": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {
+          "const": "literal"
+        },
+        "content": {
+          "type": "string",
+          "description": "Static system prompt to use verbatim."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Implementation specific metadata."
+        }
+      },
+      "additionalProperties": false
+    },
+    "RulebookReference": {
+      "type": "object",
+      "required": ["file"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Relative path to the rulebook JSON file."
+        },
+        "version": {
+          "type": "string",
+          "description": "Optional human readable version of the rulebook."
+        },
+        "contractVersion": {
+          "type": "string",
+          "description": "Optional contract version for the referenced rulebook."
+        },
+        "description": {
+          "type": "string",
+          "description": "Summary of what the rulebook enforces."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Implementation specific metadata."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

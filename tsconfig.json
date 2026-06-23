@@ -1,0 +1,82 @@
+{
+  "compilerOptions": {
+    // Modern JavaScript/TypeScript Features
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["es2022", "dom"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    
+    // Output Configuration
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
+    
+    // Module Resolution
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    
+    // Strict Type Checking (Relaxed for legacy code removal)
+    "strict": false,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "strictBindCallApply": false,
+    "strictPropertyInitialization": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": false,
+    
+    // Code Quality
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    
+    // Advanced Features
+    "useUnknownInCatchVariables": true,
+    "noUncheckedSideEffectImports": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    "preserveWatchOutput": true,
+    
+    // Performance & Debugging
+    "skipLibCheck": true,
+    "maxNodeModuleJsDepth": 10,
+    "forceConsistentCasingInFileNames": true,
+    "assumeChangesOnlyAffectDirectDependencies": true
+  },
+  
+  // Development Experience
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  
+  // File Inclusion
+  "include": [
+    "src/**/*",
+    "src/**/*.json",
+    "scripts/**/*.ts"
+  ],
+  
+  // File Exclusion
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/test/**",
+    "**/examples/**"
+  ]
+}

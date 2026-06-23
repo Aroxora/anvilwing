@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Contract v1.0",
+  "description": "JSON Schema for agent interaction contract",
+  "version": "1.0.0",
+  "definitions": {
+    "AgentEvent": {
+      "type": "object",
+      "required": ["type", "timestamp"],
+      "properties": {
+        "type": {
+          "enum": [
+            "message.start",
+            "message.delta",
+            "message.complete",
+            "tool.start",
+            "tool.complete",
+            "tool.error",
+            "edit.explanation",
+            "error",
+            "usage"
+          ]
+        },
+        "timestamp": {
+          "type": "number"
+        }
+      }
+    },
+    "ModelConfig": {
+      "type": "object",
+      "required": ["provider", "model"],
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "CapabilityManifest": {
+      "type": "object",
+      "required": ["contractVersion", "profile", "model", "tools", "features"],
+      "properties": {
+        "contractVersion": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "model": {
+          "$ref": "#/definitions/ModelConfig"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "description", "category"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

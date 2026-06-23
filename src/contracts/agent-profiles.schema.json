@@ -1,0 +1,25 @@
+{
+  "$schema": "./schemas/agent-profile.schema.json",
+  "contractVersion": "1.0.0",
+  "version": "2024-11-24",
+  "label": "Anvilwing CLI profile manifest",
+  "description": "Default profile definitions shipped with the CLI, including provider defaults and rulebook bindings.",
+  "profiles": [
+    {
+      "name": "anvilwing-code",
+      "label": "Anvilwing Code",
+      "description": "Anvilwing-powered coding specialist with advanced reasoning capabilities on max thought.",
+      "defaultProvider": "anvilwing",
+      "defaultModel": "anvilwing",
+      "systemPrompt": {
+        "type": "rulebook"
+      },
+      "rulebook": {
+        "file": "agents/anvilwing-code.rules.json",
+        "version": "2024-11-24",
+        "contractVersion": "1.0.0",
+        "description": "Deterministic coding workflow guardrails."
+      }
+    }
+  ]
+}

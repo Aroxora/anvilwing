@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# Pre-push hook — runs the full test suite before allowing a push.
+#
+# Replaces .github/workflows/hardening.yml. The CI workflow was free in
+# dollars but cost 2,000 Actions-minutes/month on a private solo repo
+# and produced an email every time a build broke (which it always does
+# during refactors, where the value-to-noise ratio inverts). Running
+# the same suite locally on git push keeps the regression net intact
+# and sends zero email.
+#
+# Install once per checkout:
+#   git config core.hooksPath scripts/git-hooks
+#
+# Bypass for an emergency push (use sparingly):
+#   git push --no-verify
+
+set -e
+
+# Run from the repo root regardless of where the user invoked git from.
+ROOT=$(git rev-parse --show-toplevel)
+cd "$ROOT"
+
+# node-pty ships its prebuilt spawn-helper without the execute bit on some
+# platforms (notably darwin-arm64), so pty.spawn() fails with "posix_spawnp
+# failed" and the full-binary PTY E2E silently self-skips on this real host —
+# which is how a real follow-up-queue crash + a prompt-buffer bug once shipped
+# unnoticed. CI skips the UI suites by design; the pre-push hook is their only
+# enforcement, so make the PTY actually fork here. Best-effort, never blocks.
+for h in node_modules/node-pty/prebuilds/*/spawn-helper; do
+  [ -f "$h" ] && chmod +x "$h" 2>/dev/null || true
+done
+
+echo "[pre-push] running full test suite (npm test)…"
+if ! npm test --silent; then
+  echo
+  echo "[pre-push] tests FAILED. Push aborted."
+  echo "[pre-push] Fix tests, or rerun with: git push --no-verify"
+  exit 1
+fi
+
+echo "[pre-push] tests passed. Pushing."

@@ -1,0 +1,367 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AGI CLI Unified Module Schema",
+  "description": "Defines the modular architecture for both TypeScript and Python implementations",
+  "version": "1.0.0",
+  "author": "Bo Shang",
+  "framework": "agi-cli",
+
+  "modules": {
+    "core": {
+      "description": "Core runtime and execution infrastructure",
+      "required": true,
+      "submodules": {
+        "types": {
+          "description": "Shared type definitions - single source of truth",
+          "exports": [
+            "ConversationRole", "ConversationMessage", "ToolCallRequest",
+            "ProviderToolDefinition", "JSONSchemaObject", "JSONSchemaProperty",
+            "ProviderResponse", "StreamChunk", "ProviderUsage"
+          ]
+        },
+        "schema": {
+          "description": "Schema loading and validation",
+          "exports": [
+            "loadUnifiedSchema", "validateToolArguments", "getProviderConfig",
+            "getTaskTypeConfig", "getToolDefinition", "SchemaCache"
+          ],
+          "dependencies": ["types"]
+        },
+        "errors": {
+          "description": "Structured error handling with auto-fix capabilities",
+          "exports": [
+            "StructuredError", "ErrorSeverity", "ErrorCategory",
+            "DangerousOperationError", "BlockedOperationError",
+            "ValidationError", "ResourceLimitError", "ContextOverflowError",
+            "ErrorSuggestion", "ErrorRecoveryStrategy"
+          ],
+          "dependencies": ["types"]
+        },
+        "version": {
+          "description": "Semantic versioning and compatibility checking",
+          "exports": [
+            "SemanticVersion", "VersionBump", "VersionConstraint",
+            "parseVersion", "compareVersions", "satisfiesConstraint",
+            "VersionManager", "SelfUpgradeManager", "PluginDependencyResolver"
+          ],
+          "dependencies": ["types", "errors"]
+        },
+        "dynamic_guardrails": {
+          "description": "Adaptive safety controls that evolve with AI capabilities",
+          "exports": [
+            "GuardrailCategory", "GuardrailSeverity", "GuardrailCondition",
+            "AdaptiveGuardrail", "GuardrailManager", "SafetyContext",
+            "createGuardrail", "evaluateGuardrail", "updateGuardrail",
+            "getGuardrailStatus", "resetGuardrail", "exportGuardrails",
+            "importGuardrails", "mergeGuardrailSets"
+          ],
+          "dependencies": ["types", "errors"]
+        },
+        "ai_system_updater": {
+          "description": "Comprehensive AI system update and migration framework",
+          "exports": [
+            "UpdateSource", "UpdatePackage", "UpdateStrategy",
+            "SystemUpdater", "UpdateValidator", "RollbackManager",
+            "MigrationPlan", "BackupStrategy", "UpdateOrchestrator",
+            "checkForUpdates", "prepareUpdate", "executeUpdate",
+            "validateUpdate", "rollbackUpdate", "cleanupUpdate"
+          ],
+          "dependencies": ["types", "errors", "version"]
+        },
+        "toolRuntime": {
+          "description": "Tool execution engine with caching and validation",
+          "exports": [
+            "ToolRuntime", "ToolRecord", "ToolSuite", "CacheEntry",
+            "ToolRuntimeObserver", "ToolExecutionResult", "CACHEABLE_TOOLS"
+          ],
+          "dependencies": ["types", "schema", "errors"]
+        },
+        "provider": {
+          "description": "LLM provider abstraction layer",
+          "exports": [
+            "LLMProvider", "ProviderFactory", "ProviderAdapter",
+            "UnifiedProviderConfig", "createProvider", "listProviders"
+          ],
+          "dependencies": ["types", "schema", "errors"]
+        },
+        "context": {
+          "description": "Token and context management",
+          "exports": [
+            "ContextManager", "ContextManagerConfig", "TruncationResult",
+            "estimateTokens", "truncateToolOutput", "pruneMessages"
+          ],
+          "dependencies": ["types"]
+        },
+        "agent": {
+          "description": "Agent runtime and conversation management",
+          "exports": [
+            "Agent", "AgentConfig", "AgentRuntime",
+            "processConversation", "resolveToolCalls"
+          ],
+          "dependencies": ["types", "toolRuntime", "provider", "context", "errors"]
+        }
+      }
+    },
+
+    "plugins": {
+      "description": "Plugin system for extensibility",
+      "required": true,
+      "submodules": {
+        "base": {
+          "description": "Plugin base class and metadata",
+          "exports": [
+            "Plugin", "PluginMetadata", "PluginConfig", "PluginCategory",
+            "PluginState", "PluginLifecycle"
+          ],
+          "dependencies": ["core.types", "core.version"]
+        },
+        "registry": {
+          "description": "Plugin discovery and registration",
+          "exports": [
+            "PluginRegistry", "discoverPlugins", "loadPlugin", "unloadPlugin",
+            "getPluginTools", "validatePluginCompatibility"
+          ],
+          "dependencies": ["base", "core.toolRuntime", "core.version"]
+        },
+        "loader": {
+          "description": "Dynamic plugin loading with lazy initialization",
+          "exports": [
+            "PluginLoader", "LazyPlugin", "loadPluginModule",
+            "isPluginEnabled", "getPluginModule"
+          ],
+          "dependencies": ["base", "registry"]
+        }
+      }
+    },
+
+    "security": {
+      "description": "Security research module (optional, lazy loaded)",
+      "required": false,
+      "requiresAuth": true,
+      "submodules": {
+        "core": {
+          "description": "Authorization and reconnaissance",
+          "exports": [
+            "AuthorizationScope", "AuthorizationRecord", "ReconResult",
+            "VulnerabilityFinding", "SecurityResearchEngine",
+            "createBugBountyAuthorization", "createPentestAuthorization"
+          ]
+        },
+
+        "google": {
+          "description": "Google Cloud/Workspace persistence research",
+          "optional": true,
+          "exports": [
+            "GoogleService", "PersistenceCategory", "PersistenceVector",
+            "GooglePersistenceResearcher", "GCP_PERSISTENCE_VECTORS",
+            "WORKSPACE_PERSISTENCE_VECTORS"
+          ],
+          "dependencies": ["core"]
+        }
+      }
+    },
+
+    "capabilities": {
+      "description": "Core tool implementations",
+      "required": true,
+      "submodules": {
+        "filesystem": {
+          "description": "File operations",
+          "exports": ["readFile", "writeFile", "listDirectory"],
+          "tools": ["read", "write"]
+        },
+        "edit": {
+          "description": "In-place file editing",
+          "exports": ["editFile", "applyEdit"],
+          "tools": ["edit"]
+        },
+        "bash": {
+          "description": "Shell command execution",
+          "exports": ["executeBash", "runInBackground", "killProcess"],
+          "tools": ["bash"]
+        },
+        "search": {
+          "description": "Code and file search",
+          "exports": ["globSearch", "grepSearch"],
+          "tools": ["glob", "grep"]
+        },
+        "web": {
+          "description": "Web operations",
+          "exports": ["webSearch", "webFetch"],
+          "tools": ["web_search", "web_fetch"]
+        },
+        "coding": {
+          "description": "Code analysis and generation",
+          "exports": [
+            "analyzeComplexity", "findDependencies", "generateDocstring",
+            "suggestRefactorings", "generateTestStub"
+          ],
+          "tools": ["analyze_complexity", "find_dependencies", "generate_docstring"]
+        }
+      }
+    },
+
+    "ui": {
+      "description": "User interface components",
+      "required": false,
+      "submodules": {
+        "display": {
+          "description": "Output formatting and display",
+          "exports": ["formatOutput", "formatError", "formatToolResult"]
+        },
+        "prompt": {
+          "description": "Interactive prompt handling",
+          "exports": ["createPrompt", "promptUser"]
+        },
+        "theme": {
+          "description": "Theming and styling",
+          "exports": ["Theme", "applyTheme", "getColors"]
+        }
+      }
+    }
+  },
+
+  "interfaces": {
+    "ToolSuite": {
+      "description": "Collection of related tools",
+      "properties": {
+        "name": { "type": "string", "description": "Suite identifier" },
+        "version": { "type": "string", "description": "Semantic version" },
+        "tools": { "type": "array", "items": { "$ref": "#/interfaces/ToolDefinition" } }
+      }
+    },
+    "ToolDefinition": {
+      "description": "Single tool definition",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "parameters": { "$ref": "#/interfaces/JSONSchemaObject" },
+        "execute": { "type": "function", "async": true }
+      }
+    },
+    "Plugin": {
+      "description": "Plugin interface",
+      "properties": {
+        "metadata": { "$ref": "#/interfaces/PluginMetadata" },
+        "initialize": { "type": "function", "async": true },
+        "getToolSuites": { "type": "function", "returns": "ToolSuite[]" },
+        "unload": { "type": "function", "async": true }
+      }
+    },
+    "PluginMetadata": {
+      "description": "Plugin metadata",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "category": { "type": "string", "enum": ["coding", "rl", "security", "dev"] },
+        "dependencies": { "type": "array", "items": { "type": "string" } },
+        "minCliVersion": { "type": "string", "optional": true },
+        "maxCliVersion": { "type": "string", "optional": true }
+      }
+    },
+    "LLMProvider": {
+      "description": "LLM provider interface",
+      "properties": {
+        "id": { "type": "string" },
+        "model": { "type": "string" },
+        "generate": { "type": "function", "async": true },
+        "generateStream": { "type": "function", "async": true, "optional": true }
+      }
+    },
+    "StructuredError": {
+      "description": "Structured error with recovery capabilities",
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "severity": { "type": "string", "enum": ["critical", "error", "warning", "info"] },
+        "category": { "type": "string" },
+        "suggestions": { "type": "array", "items": { "$ref": "#/interfaces/ErrorSuggestion" } },
+        "recoverable": { "type": "boolean" },
+        "tryAutoFix": { "type": "function", "optional": true }
+      }
+    },
+    "SemanticVersion": {
+      "description": "Semantic version representation",
+      "properties": {
+        "major": { "type": "integer" },
+        "minor": { "type": "integer" },
+        "patch": { "type": "integer" },
+        "prerelease": { "type": "string", "optional": true },
+        "build": { "type": "string", "optional": true }
+      }
+    }
+  },
+
+  "patterns": {
+    "lazyLoading": {
+      "description": "Pattern for lazy loading optional modules",
+      "example": {
+        "typescript": "let _module: typeof import('./module') | null = null;\nexport async function getModule() {\n  if (!_module) _module = await import('./module');\n  return _module;\n}",
+        "python": "_module = None\ndef get_module():\n    global _module\n    if _module is None:\n        from . import module as _m\n        _module = _m\n    return _module"
+      }
+    },
+    "observer": {
+      "description": "Observer pattern for lifecycle events",
+      "events": ["onStart", "onResult", "onError", "onCacheHit"]
+    },
+    "registry": {
+      "description": "Registry pattern for tool/plugin management",
+      "operations": ["register", "unregister", "get", "list", "has"]
+    },
+    "factory": {
+      "description": "Factory pattern for creating providers/agents",
+      "operations": ["create", "configure", "validate"]
+    }
+  },
+
+  "fileStructure": {
+    "typescript": {
+      "src/": {
+        "core/": ["types.ts", "schema.ts", "errors.ts", "version.ts", "toolRuntime.ts", "provider.ts", "context.ts", "agent.ts", "index.ts"],
+        "plugins/": ["base.ts", "registry.ts", "loader.ts", "index.ts"],
+        "alpha-zero/": ["types.ts", "metrics.ts", "codeEvaluator.ts", "selfModification.ts", "introspection.ts", "competitive.ts", "reward.ts", "index.ts"],
+        "alpha-zero/security/": ["core.ts", "simulation.ts", "google.ts", "googleLoader.ts", "index.ts"],
+        "capabilities/": ["filesystem.ts", "edit.ts", "bash.ts", "search.ts", "web.ts", "coding.ts", "index.ts"],
+        "ui/": ["UnifiedUIRenderer.ts", "PromptController.ts", "outputMode.ts", "theme.ts", "globalWriteLock.ts", "index.ts"],
+        "contracts/": ["unified-schema.json", "module-schema.json"]
+      }
+    },
+    "python": {
+      "agi_cli/": {
+        "core/": ["types.py", "schema.py", "errors.py", "version.py", "tool_runtime.py", "provider.py", "context.py", "agent.py", "__init__.py"],
+        "plugins/": ["base.py", "registry.py", "loader.py", "__init__.py"],
+        "alpha_zero/": ["types.py", "metrics.py", "code_evaluator.py", "self_modification.py", "introspection.py", "competitive.py", "reward.py", "__init__.py"],
+        "alpha_zero/security/": ["core.py", "google.py", "__init__.py"],
+        "capabilities/": ["filesystem.py", "edit.py", "bash.py", "search.py", "web.py", "coding.py", "__init__.py"],
+        "ui/": ["unified_ui_renderer.py", "prompt_controller.py", "output_mode.py", "theme.py", "__init__.py"]
+      }
+    }
+  },
+
+  "conventions": {
+    "naming": {
+      "typescript": {
+        "files": "camelCase.ts",
+        "classes": "PascalCase",
+        "functions": "camelCase",
+        "constants": "SCREAMING_SNAKE_CASE",
+        "interfaces": "PascalCase (no I prefix)"
+      },
+      "python": {
+        "files": "snake_case.py",
+        "classes": "PascalCase",
+        "functions": "snake_case",
+        "constants": "SCREAMING_SNAKE_CASE"
+      }
+    },
+    "exports": {
+      "typescript": "Named exports preferred, barrel files (index.ts) for modules",
+      "python": "__all__ in __init__.py, explicit imports"
+    },
+    "async": {
+      "typescript": "async/await with Promise<T>",
+      "python": "async/await with Optional sync wrappers"
+    }
+  }
+}

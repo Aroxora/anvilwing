@@ -1,0 +1,528 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agi.ai/schemas/agent-schemas.schema.json",
+  "title": "Agent Schemas Configuration",
+  "description": "Centralized schema for all agent configurations, models, providers, and capabilities",
+  "type": "object",
+  "required": ["contractVersion", "version", "providers", "models", "profiles"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "contractVersion": {
+      "type": "string",
+      "description": "Version of the contract schema",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of this configuration file"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable label for this configuration"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of this configuration"
+    },
+    "providers": {
+      "type": "array",
+      "description": "Available LLM providers",
+      "items": {
+        "$ref": "#/definitions/provider"
+      },
+      "minItems": 1
+    },
+    "models": {
+      "type": "array",
+      "description": "Available models across all providers",
+      "items": {
+        "$ref": "#/definitions/model"
+      },
+      "minItems": 1
+    },
+    "profiles": {
+      "type": "array",
+      "description": "Agent profiles with their configurations",
+      "items": {
+        "$ref": "#/definitions/profile"
+      },
+      "minItems": 1
+    },
+    "slashCommands": {
+      "type": "array",
+      "description": "Available slash commands",
+      "items": {
+        "$ref": "#/definitions/slashCommand"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "Capability definitions",
+      "items": {
+        "$ref": "#/definitions/capability"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about this configuration"
+    }
+  },
+  "definitions": {
+    "provider": {
+      "type": "object",
+      "required": ["id", "label"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the provider",
+          "enum": ["anvilwing"]
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the provider"
+        },
+        "envVars": {
+          "type": "object",
+          "description": "Environment variable mappings",
+          "properties": {
+            "apiKey": {
+              "type": "string",
+              "description": "Environment variable name for API key"
+            }
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "Capabilities supported by this provider",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional provider metadata"
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["id", "label", "provider"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique model identifier"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for the model"
+        },
+        "provider": {
+          "type": "string",
+          "description": "Provider ID this model belongs to",
+          "enum": ["anvilwing"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the model's capabilities"
+        },
+        "reasoningEffort": {
+          "type": "string",
+          "description": "Reasoning effort level",
+          "enum": ["low", "medium", "high"]
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Default temperature setting",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "maxTokens": {
+          "type": "integer",
+          "description": "Maximum tokens for output",
+          "minimum": 1
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "Capabilities supported by this model",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional model metadata"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "required": ["name", "label", "defaultProvider", "defaultModel", "systemPrompt", "rulebook"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique profile identifier"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the profile's purpose"
+        },
+        "defaultProvider": {
+          "type": "string",
+          "description": "Default provider for this profile",
+          "enum": ["anvilwing"]
+        },
+        "defaultModel": {
+          "type": "string",
+          "description": "Default model for this profile"
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Default temperature",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "maxTokens": {
+          "type": "integer",
+          "description": "Maximum tokens",
+          "minimum": 1
+        },
+        "systemPrompt": {
+          "$ref": "#/definitions/systemPromptConfig"
+        },
+        "rulebook": {
+          "$ref": "#/definitions/rulebookReference"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional profile metadata"
+        }
+      }
+    },
+    "systemPromptConfig": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "literal"
+            },
+            "content": {
+              "type": "string",
+              "description": "Literal prompt content"
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "rulebook"
+            },
+            "template": {
+              "type": "string",
+              "description": "Template with placeholders like {{rulebook}}, {{profile}}, {{profile_name}}"
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "rulebookReference": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["file"],
+          "properties": {
+            "file": {
+              "type": "string",
+              "description": "Path to external rulebook JSON file"
+            },
+            "version": {
+              "type": "string",
+              "description": "Rulebook version"
+            },
+            "contractVersion": {
+              "type": "string",
+              "description": "Contract version this rulebook adheres to"
+            },
+            "description": {
+              "type": "string",
+              "description": "Rulebook description"
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Additional rulebook metadata"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["inline"],
+          "properties": {
+            "inline": {
+              "$ref": "#/definitions/inlineRulebook"
+            },
+            "version": {
+              "type": "string",
+              "description": "Rulebook version"
+            },
+            "contractVersion": {
+              "type": "string",
+              "description": "Contract version this rulebook adheres to"
+            },
+            "description": {
+              "type": "string",
+              "description": "Rulebook description"
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Additional rulebook metadata"
+            }
+          }
+        }
+      ]
+    },
+    "inlineRulebook": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for the rulebook"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the rulebook's purpose"
+        },
+        "globalPrinciples": {
+          "type": "array",
+          "description": "Global principles that apply across all phases",
+          "items": {
+            "$ref": "#/definitions/rule"
+          }
+        },
+        "phases": {
+          "type": "array",
+          "description": "Execution phases with their steps",
+          "items": {
+            "$ref": "#/definitions/phase"
+          }
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "required": ["id", "summary"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique rule identifier"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Concise rule summary"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed explanation of the rule"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "required", "recommended", "info"],
+          "description": "Rule severity level"
+        },
+        "evidenceRequired": {
+          "type": "string",
+          "description": "Evidence required to satisfy this rule"
+        },
+        "toolHints": {
+          "type": "array",
+          "description": "Suggested tools for implementing this rule",
+          "items": {
+            "type": "string"
+          }
+        },
+        "references": {
+          "type": "array",
+          "description": "Reference materials",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "file": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "required": ["id", "label", "steps"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique phase identifier"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable phase label"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the phase's purpose"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "Condition that triggers this phase"
+        },
+        "steps": {
+          "type": "array",
+          "description": "Steps within this phase",
+          "items": {
+            "$ref": "#/definitions/step"
+          }
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "title", "rules"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique step identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Step title"
+        },
+        "intent": {
+          "type": "string",
+          "description": "Intent or purpose of this step"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description"
+        },
+        "entryCriteria": {
+          "type": "array",
+          "description": "Criteria for entering this step",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exitCriteria": {
+          "type": "array",
+          "description": "Criteria for completing this step",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowedTools": {
+          "type": "array",
+          "description": "Tools allowed in this step",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blockedTools": {
+          "type": "array",
+          "description": "Tools blocked in this step",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "description": "Additional notes",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "description": "Rules for this step",
+          "items": {
+            "$ref": "#/definitions/rule"
+          }
+        },
+        "subSteps": {
+          "type": "array",
+          "description": "Sub-steps within this step",
+          "items": {
+            "$ref": "#/definitions/step"
+          }
+        }
+      }
+    },
+    "slashCommand": {
+      "type": "object",
+      "required": ["command", "description"],
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The slash command (e.g., /model)",
+          "pattern": "^/"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of what the command does"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category this command belongs to",
+          "enum": ["configuration", "diagnostics", "workspace", "other"]
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional command metadata"
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "required": ["id", "label"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique capability identifier"
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the capability"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional capability metadata"
+        }
+      }
+    }
+  }
+}
