@@ -666,7 +666,7 @@ class InteractiveShell {
     const info = await checkForUpdates(getVersion(), true).catch(() => null); // force a fresh check
     this.promptController?.setStatusMessage(null);
     if (!info) {
-      renderer?.addEvent('system', chalk.dim('Could not reach npm to check for updates. Try again, or run: npm i -g anvilwing@latest'));
+      renderer?.addEvent('system', chalk.dim('Could not reach npm to check for updates. Try again, or run: npm i -g anvilwing-coder@latest'));
       return;
     }
     if (!info.updateAvailable) {

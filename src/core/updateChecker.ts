@@ -108,7 +108,7 @@ export async function checkForUpdates(currentVersion: string, force = false): Pr
   try {
     // Query the published version by the package's own name (see
     // package.json "name"). Keep this in sync with that field.
-    const { stdout } = await execAsync('npm view anvilwing version', {
+    const { stdout } = await execAsync('npm view anvilwing-coder version', {
       timeout: 5000,
       encoding: 'utf8',
     });
@@ -299,7 +299,7 @@ export function formatUpdateNotification(updateInfo: UpdateInfo, note?: string):
   }
 
   lines.push(
-    padLine('Run: npm install -g anvilwing@latest', theme.primary),
+    padLine('Run: npm install -g anvilwing-coder@latest', theme.primary),
     theme.warning(`╰${border}╯`),
     ''
   );
@@ -446,7 +446,7 @@ function resolveUpdateCommand(): string {
   if (override && override.trim()) {
     return override.trim();
   }
-  return 'npm install -g anvilwing@latest';
+  return 'npm install -g anvilwing-coder@latest';
 }
 
 export interface UpdatePromptResult {

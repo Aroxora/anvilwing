@@ -36,7 +36,7 @@ interface DiscoveredModelsCache {
 }
 
 const MODEL_PROVIDER_HINTS: Array<{ provider: ProviderId; patterns: RegExp[] }> = [
-  { provider: 'anvilwing', patterns: [/^anvilwing/i] },
+  { provider: 'anvilwing', patterns: [/^deepseek/i] },
 ];
 
 /**
@@ -296,7 +296,7 @@ const PROVIDER_CONFIGS: Array<{
       id: 'anvilwing',
       name: 'Anvilwing',
       envVar: 'ANVILWING_API_KEY',
-      defaultLatestModel: 'anvilwing',
+      defaultLatestModel: 'deepseek-v4-pro',
       // Single locked model — no alternate to fall back to.
       fallbackModels: [],
     },
@@ -307,7 +307,7 @@ const PROVIDER_CONFIGS: Array<{
  */
 const MODEL_PRIORITIES: Record<string, Record<string, number>> = {
   anvilwing: {
-    'anvilwing': 100,
+    'deepseek-v4-pro': 100,
   },
 };
 

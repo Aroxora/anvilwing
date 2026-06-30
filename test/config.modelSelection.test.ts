@@ -39,7 +39,7 @@ describe('resolveProfileConfig model/provider alignment (ts-node)', () => {
 
     expect(result.status).toBe(0);
     const payload = JSON.parse(result.stdout.trim()) as { provider: string; model: string; providerLocked: boolean };
-    expect(payload.model).toBe('anvilwing');
+    expect(payload.model).toBe('deepseek-v4-pro');
     expect(payload.provider).toBe('anvilwing');
   });
 
@@ -53,7 +53,7 @@ describe('resolveProfileConfig model/provider alignment (ts-node)', () => {
 
     expect(result.status).toBe(0);
     const payload = JSON.parse(result.stdout.trim()) as { provider: string; model: string; providerLocked: boolean };
-    expect(payload.model).toBe('anvilwing');
+    expect(payload.model).toBe('deepseek-v4-pro');
     expect(payload.provider).toBe('anvilwing');
     expect(payload.providerLocked).toBe(true);
   });
@@ -66,7 +66,7 @@ describe('resolveProfileConfig model/provider alignment (ts-node)', () => {
 
     expect(result.status).toBe(0);
     const payload = JSON.parse(result.stdout.trim()) as { provider: string; model: string };
-    expect(payload.model).toBe('anvilwing');
+    expect(payload.model).toBe('deepseek-v4-pro');
     expect(payload.provider).toBe('anvilwing');
   });
 });
