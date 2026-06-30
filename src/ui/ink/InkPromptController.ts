@@ -385,6 +385,13 @@ export class InkPromptController extends EventEmitter implements IPromptControll
         stdout: this.stdout as any,
         // exitOnCtrlC=false so the host's onCtrlC callback fires first.
         exitOnCtrlC: false,
+        // Without this, Ink re-emits the whole dynamic frame (spinner + box +
+        // strip + meta + blank margins) every animation tick; on a full screen
+        // that scrolls a blank-laden copy into scrollback per tick — the
+        // "thinking spews blank vertical lines" bug (see
+        // test/e2e-thinking-no-blank-lines.test.ts). Incremental rewrites only
+        // the lines that changed.
+        incrementalRendering: true,
       });
     } finally {
       // Always resolve — a waiter must never hang even if mount throws.
@@ -429,6 +436,8 @@ export class InkPromptController extends EventEmitter implements IPromptControll
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         stdout: this.stdout as any,
         exitOnCtrlC: false,
+        // Same blank-line-leak fix as the initial mount above.
+        incrementalRendering: true,
       });
     } else {
       this.rerender();

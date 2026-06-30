@@ -418,6 +418,52 @@ if (scenario === 'double-submit') {
   finish();
 }
 
+if (scenario === 'thinking-stream') {
+  // Reproduce the interactiveShell turn lifecycle so the test can prove the
+  // "thinking spews blank vertical lines" bug is gone. The model thinks for a
+  // while (reasoning streamed as dropped 'thought' events, the spinner +
+  // token meter animating), then streams a short answer. With Ink's
+  // incremental log-update the unchanged chrome (the bordered input box) is
+  // emitted ONCE and skipped on every subsequent frame; without it, the whole
+  // multi-line frame — box, strip, meta and its blank margin rows — is
+  // re-emitted on every tick and scrolls a fresh copy into the transcript.
+  await new Promise(r => setImmediate(r));
+  const R = ctrl.getRenderer();
+  R.addEvent('banner', 'Anvilwing Coder');
+  await new Promise(r => setTimeout(r, 40));
+  ctrl.addUserHistoryItem('explain how the event loop works');
+  await new Promise(r => setTimeout(r, 40));
+  R.addEvent('response', 'The event loop is the core scheduler of the runtime.');
+  await new Promise(r => setTimeout(r, 60));
+
+  ctrl.setStreaming(true);
+  ctrl.setStatusMessage('Thinking...');
+  // ── thinking phase: many frames, NO new history committed ──
+  let toks = 0;
+  for (let i = 0; i < 20; i++) {
+    toks += 7;
+    ctrl.setActivityMessage('Thinking');
+    ctrl.setMetaStatus({ outputTokens: toks });
+    R.addEvent('thought', `reasoning step ${i} that the user should never see as chat`);
+    await new Promise(r => setTimeout(r, 60));
+  }
+  process.stderr.write('THINKING-DONE\n');
+  // ── stream the visible answer ──
+  for (const w of 'The loop drains microtasks before the next macrotask. '.split(/(\s+)/)) {
+    toks += 1;
+    R.addEvent('stream', w);
+    ctrl.setMetaStatus({ outputTokens: toks });
+    await new Promise(r => setTimeout(r, 30));
+  }
+  ctrl.setStatusMessage(null);
+  R.addEvent('response', '\n');
+  await new Promise(r => setTimeout(r, 80));
+  ctrl.setStreaming(false);
+  ctrl.setActivityMessage(null);
+  await new Promise(r => setTimeout(r, 120));
+  finish();
+}
+
 function finish() {
   ctrl.stop();
   // Give Ink's final unmount render a tick to flush to the piped stdout
@@ -427,7 +473,7 @@ function finish() {
 
 // Drive submit when stdin closes for the addEvent / mode-toggle / tap
 // scenarios that don't need user input.
-if (!['capture-input', 'permission-cycle', 'spinner-meta', 'diff-colors', 'queue-render', 'double-submit', 'chat-spacing'].includes(scenario)) {
+if (!['capture-input', 'permission-cycle', 'spinner-meta', 'diff-colors', 'queue-render', 'double-submit', 'chat-spacing', 'thinking-stream'].includes(scenario)) {
   setTimeout(() => {
     fakeStdin.push('\r');
   }, 300);
